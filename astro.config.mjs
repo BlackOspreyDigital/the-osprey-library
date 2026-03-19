@@ -4,8 +4,13 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
+import cloudflare from '@astrojs/cloudflare';
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://theospreylibrary.com',
+  site: 'https://example.com',
   integrations: [mdx(), sitemap()],
+  adapter: cloudflare({
+    imageService: 'passthrough', // <-- Images were working just needed to pass
+  }),
 });
