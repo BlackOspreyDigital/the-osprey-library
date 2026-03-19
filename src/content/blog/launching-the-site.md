@@ -2,7 +2,7 @@
 title: "The Library Begins"
 description: "Rejecting modernity embracing art"
 pubDate: "Mar 18 2026"
-heroImage: "./liminalroads.png"
+heroImage: "/liminalroads.png"
 ---
 
 The **theospreylibrary.com** domain is now officially connected.
