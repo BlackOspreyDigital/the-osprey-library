@@ -10,5 +10,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://example.com',
   integrations: [mdx(), sitemap()],
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'passthrough', // <-- Images were working just needed to pass
+  }),
 });
