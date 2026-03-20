@@ -1,0 +1,78 @@
+---
+// src/pages/devlog/[id].astro
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const devlogEntries = await getCollection('devlog');
+  return devlogEntries.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{post.data.title} | Crescendo Engine</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: #0d1117;
+        color: #c9d1d9;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+        max-width: 800px;
+        line-height: 1.6;
+      }
+      
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        color: #58a6ff;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      
+      .back-btn:hover { text-decoration: underline; }
+      .header { border-bottom: 1px solid #30363d; padding-bottom: 2rem; margin-bottom: 2rem; }
+      h1 { color: #ffffff; font-size: 2.5rem; margin-bottom: 0.5rem; }
+      .date { color: #8b949e; font-size: 0.95rem; }
+
+      /* Styles for the Markdown content */
+      .content :global(h2) { color: #ffffff; margin-top: 2rem; }
+      .content :global(h3) { color: #ffffff; margin-top: 1.5rem; }
+      .content :global(code) { 
+        background-color: #161b22; 
+        padding: 0.2rem 0.4rem; 
+        border-radius: 4px; 
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+      .content :global(pre) {
+        background-color: #161b22 !important;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #30363d;
+        overflow-x: auto;
+      }
+      .content :global(a) { color: #58a6ff; }
+    </style>
+  </head>
+  <body>
+    <a href="/devlog" class="back-btn">&larr; Back to Devlog</a>
+    
+    <div class="header">
+      <h1>{post.data.title}</h1>
+      <span class="date">{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+    </div>
+
+    <div class="content">
+      <Content />
+    </div>
+  </body>
+</html>

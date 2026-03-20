@@ -7,5 +7,11 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   image: {
     service: passthroughImageService()
-  }
+  },
+  markdown: {
+    shikiConfig: {
+      theme: 'github-dark',
+      wrap: true,
+    },
+  },
 });
