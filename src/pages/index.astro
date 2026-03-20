@@ -1,89 +1,156 @@
 ---
-// src/pages/devlog/index.astro
-// Main hub for all development logs
+// src/pages/index.astro
+// Main landing page for Crescendo Engine
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Devlog | Crescendo Engine</title>
+    <title>Crescendo Engine | Custom 3D Vulkan Engine</title>
     <style>
+      :root {
+        --bg-color: #0d1117;
+        --text-main: #c9d1d9;
+        --accent: #58a6ff;
+        --accent-glow: rgba(88, 166, 255, 0.15);
+        --card-bg: #161b22;
+        --border-color: #30363d;
+      }
+      
       body {
         font-family: system-ui, -apple-system, sans-serif;
-        background-color: #0d1117;
-        color: #c9d1d9;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-        max-width: 800px;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
         line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 8rem 2rem 6rem;
+        border-bottom: 1px solid var(--border-color);
+        background: radial-gradient(circle at top center, #1f2937 0%, transparent 70%);
       }
 
       h1 {
+        font-size: 4.5rem;
+        margin-bottom: 1rem;
         color: #ffffff;
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
+        letter-spacing: -0.05em;
+        text-shadow: 0 0 30px var(--accent-glow);
       }
 
       .subtitle {
+        font-size: 1.5rem;
         color: #8b949e;
-        font-size: 1.2rem;
-        margin-bottom: 3rem;
-        border-bottom: 1px solid #30363d;
-        padding-bottom: 2rem;
+        max-width: 650px;
+        margin: 0 auto 2.5rem;
       }
 
-      a {
-        color: #58a6ff;
-        text-decoration: none;
+      .tech-stack {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
       }
 
-      a:hover {
-        text-decoration: underline;
+      .tag {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        padding: 0.4rem 1.2rem;
+        border-radius: 99px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
-      .back-btn {
-        display: inline-block;
-        margin-bottom: 2rem;
-        font-weight: bold;
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        padding: 5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
       }
 
-      .post-list {
-        list-style: none;
-        padding: 0;
+      .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2.5rem;
+        transition: transform 0.2s ease, border-color 0.2s ease;
       }
 
-      .post-item {
-        background-color: #161b22;
-        border: 1px solid #30363d;
-        border-radius: 8px;
-        padding: 1.5rem;
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: 0 10px 30px var(--accent-glow);
+      }
+
+      .card h3 {
+        color: #ffffff;
+        font-size: 1.3rem;
+        margin-top: 0;
         margin-bottom: 1rem;
       }
 
-      .post-item h2 {
-        margin: 0 0 0.5rem 0;
-        color: #ffffff;
+      .cta-container {
+        text-align: center;
+        padding: 2rem 2rem 6rem;
       }
 
-      .date {
-        font-size: 0.85rem;
-        color: #8b949e;
+      .btn {
+        display: inline-block;
+        background-color: var(--accent);
+        color: #0d1117;
+        text-decoration: none;
+        padding: 1rem 2.5rem;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: opacity 0.2s ease;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
       }
     </style>
   </head>
   <body>
-    <a href="/" class="back-btn">&larr; Back to Engine Overview</a>
-    
-    <h1>Development Log</h1>
-    <p class="subtitle">Architecture decisions, rendering pipelines, and engineering notes.</p>
+    <main>
+      <header class="hero">
+        <h1>Crescendo Engine</h1>
+        <p class="subtitle">A high-performance, custom 3D game engine engineered for bare-metal control and rendering speed.</p>
+        <div class="tech-stack">
+          <span class="tag">C++ Architecture</span>
+          <span class="tag">Vulkan API</span>
+          <span class="tag">Linux Native</span>
+        </div>
+      </header>
 
-    <ul class="post-list">
-      <li class="post-item">
-        <h2>System Architecture & Initialization</h2>
-        <span class="date">March 20, 2026</span>
-        <p>Initial setup of the build system and establishing the core event loop.</p>
-      </li>
-    </ul>
+      <section class="features">
+        <div class="card">
+          <h3>Vulkan Rendering Pipeline</h3>
+          <p>Built directly on the Vulkan API to leverage modern, low-overhead GPU commands, explicit memory management, and highly parallelized draw calls.</p>
+        </div>
+        <div class="card">
+          <h3>C++ Core</h3>
+          <p>A deterministic, memory-safe architecture written from the ground up in C++ to guarantee maximum throughput and minimal CPU latency.</p>
+        </div>
+        <div class="card">
+          <h3>Development Log</h3>
+          <p>Documenting the architecture decisions, from setting up the swapchain and writing custom shaders to exploring future voxel systems.</p>
+        </div>
+      </section>
+
+      <section class="cta-container">
+        <a href="/devlog" class="btn">Read the Devlog</a>
+      </section>
+    </main>
   </body>
 </html>
