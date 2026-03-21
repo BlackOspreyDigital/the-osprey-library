@@ -4,7 +4,8 @@ date: 2026-03-20
 description: "HelloWorld for the Crescendo Engine."
 ---
 
-["../../assets/voxel1.png"]
+![First Voxel Render](../../assets/voxel1.png)
+
 ## The Mission
 Our engine works through a series of server networks that are spun up locally. The vulkan pipeline lives inside the rendering server, physics lives in the physics server, and so on! With this method, our ECS (Entity Component Systems) can have their data processed and presented at efficient rates. The end result gives sharp and dynamic graphics fidelity. Using 64bit Color and industry standard technices for principled BSDF systems for high quality materials like PBR and Path tracing.
 
