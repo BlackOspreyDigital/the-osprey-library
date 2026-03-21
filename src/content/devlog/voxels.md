@@ -2,6 +2,7 @@
 title: "Voxel Module"
 date: 2026-03-20
 description: "Progression tracking regarding voxel and procedural generation."
+heroImage: "../../assets/voxel1"
 ---
 
 ## Procedural Generation of Voxel Math>
