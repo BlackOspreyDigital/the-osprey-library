@@ -1,86 +1,271 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+// Prop definition for your devlog schema
+type Props = CollectionEntry<'devlog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+// Destructuring props, perfectly matching your schema
+const { title, description, date } = Astro.props;
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+    <head>
+        <BaseHead title={title} description={description} />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+        
+        <style is:global>
+            :root {
+                --bg-base: #050505;
+                --bg-surface: #0a0a0a;
+                --text-main: #ededed;
+                --text-muted: #888888;
+                --accent: #58a6ff;
+                --border-color: #222222;
+            }
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--bg-base);
+                color: var(--text-main);
+                margin: 0;
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            main {
+                width: 100%;
+                margin: 0;
+                padding-top: 4rem;
+            }
+
+            .prose {
+                width: 800px;
+                max-width: calc(100% - 2rem);
+                margin: auto;
+                padding: 1rem;
+                color: var(--text-main);
+            }
+
+            /* --- THE FIX FOR THE WIDE IMAGES --- */
+            /* Forces images to fit text margins, centers them, and indicates they are clickable */
+            .prose img {
+                max-width: 75%; /* Shrinks the image to leave breathing room */
+                height: auto;
+                border-radius: 8px;
+                display: block;
+                margin: 2.5rem auto; /* The 'auto' keeps it perfectly centered */
+                border: 1px solid var(--border-color);
+                cursor: zoom-in;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Adds a subtle drop shadow */
+            }
+
+            /* --- LIGHTBOX (ZOOM) CSS --- */
+            /* This is the hidden dark background that centers the image */
+            .image-lightbox {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            /* When the script adds this class, the lightbox is revealed */
+            .image-lightbox.is-visible {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Styles the enlarged, centered image */
+            .lightbox-img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                box-shadow: 0 0 80px rgba(88, 166, 255, 0.25); /* Subtle blue glow */
+                border: 2px solid var(--border-color);
+                border-radius: 4px;
+            }
+
+            /* Styles the close button */
+            .lightbox-close {
+                position: absolute;
+                top: 2rem;
+                right: 2rem;
+                background: none;
+                border: none;
+                color: var(--text-muted);
+                font-size: 3rem;
+                cursor: pointer;
+                line-height: 1;
+                transition: color 0.2s ease;
+            }
+
+            .lightbox-close:hover {
+                color: var(--text-main);
+            }
+
+            /* Dark theme styling for markdown content */
+            .prose h1, .prose h2, .prose h3, .prose h4 {
+                color: #ffffff;
+                font-weight: 600;
+                margin-top: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .prose p {
+                margin-bottom: 1.5rem;
+                font-size: 1.05rem;
+                color: #c9d1d9;
+            }
+
+            .prose code {
+                font-family: 'JetBrains Mono', monospace;
+                background-color: rgba(255, 255, 255, 0.05);
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+                font-size: 0.9em;
+            }
+
+            .prose pre {
+                background-color: #0d1117;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 1.5rem;
+                overflow-x: auto;
+                margin: 2rem 0;
+            }
+
+            .prose pre code {
+                background-color: transparent;
+                padding: 0;
+            }
+
+            .title {
+                margin-bottom: 3rem;
+                text-align: center;
+                line-height: 1.2;
+            }
+
+            .title h1 {
+                margin: 0.5em 0;
+                font-size: 2.5rem;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
+
+            .date {
+                margin-bottom: 1rem;
+                color: var(--accent);
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--border-color);
+                margin: 2rem auto;
+            }
+        </style>
+    </head>
+
+    <body>
+        <Header />
+        <main>
+            <article>
+                <div class="prose">
+                    <div class="title">
+                        <div class="date">
+                            {date && <FormattedDate date={date} />}
+                        </div>
+                        <h1>{title}</h1>
+                        <hr />
+                    </div>
+                    <slot />
+                </div>
+            </article>
+        </main>
+        
+        <div id="image-lightbox" class="image-lightbox">
+            <button id="lightbox-close" class="lightbox-close">&times;</button>
+            <img id="lightbox-img" class="lightbox-img" src="" alt="">
+        </div>
+
+        <Footer />
+
+        <script>
+            // This silent script runs client-side to handle the click interaction
+            function setupImageLightbox() {
+              const prose = document.querySelector('.prose');
+              const lightbox = document.getElementById('image-lightbox');
+              const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+              const closeBtn = document.getElementById('lightbox-close');
+
+              if (!prose || !lightbox || !lightboxImg || !closeBtn) return;
+
+              // 1. Locate every image inside your markdown column
+              const images = prose.querySelectorAll('img');
+
+              images.forEach(img => {
+                img.addEventListener('click', () => {
+                  // 2. On click, grab the clicked image source and swap it into the lightbox
+                  lightboxImg.src = img.src;
+                  lightboxImg.alt = img.alt;
+                  
+                  // 3. Reveal the centered lightbox
+                  lightbox.classList.add('is-visible');
+                  
+                  // 4. Lock background scrolling while zoomed
+                  document.body.style.overflow = 'hidden';
+                });
+              });
+
+              // --- Close functionalities ---
+              const closeLightbox = () => {
+                lightbox.classList.remove('is-visible');
+                // Re-enable background scrolling
+                document.body.style.overflow = '';
+                // Optional: clear src after animation to prevent image flashing next time
+                setTimeout(() => { lightboxImg.src = ''; }, 300);
+              };
+
+              closeBtn.addEventListener('click', closeLightbox);
+              
+              // Close if the background (the black void) is clicked, not the image itself
+              lightbox.addEventListener('click', (e) => {
+                  if (e.target === lightbox) {
+                      closeLightbox();
+                  }
+              });
+
+              // Close with Escape key for accessibility/UX
+              document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('is-visible')) {
+                  closeLightbox();
+                }
+              });
+            }
+
+            // Fire the setup script when the page is ready
+            setupImageLightbox();
+
+            // Re-fire if you are using Astro's view transitions features (e.g. Astro-swup)
+            document.addEventListener('astro:after-swap', setupImageLightbox);
+        </script>
+    </body>
 </html>

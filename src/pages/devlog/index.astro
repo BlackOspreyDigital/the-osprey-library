@@ -1,10 +1,14 @@
 ---
-// src/pages/devlog/index.astro
 import { getCollection } from 'astro:content';
 
-const allLogs = await getCollection('devlog');
-// Sort by date, newest first
-allLogs.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = await getCollection('devlog');
+
+// Sort posts by date, handling missing dates gracefully
+posts.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).valueOf() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).valueOf() : 0;
+  return dateB - dateA;
+});
 ---
 
 <html lang="en">
@@ -12,43 +16,187 @@ allLogs.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Devlog | Crescendo Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-      body {
-        font-family: system-ui, -apple-system, sans-serif;
-        background-color: #0d1117;
-        color: #c9d1d9;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-        max-width: 800px;
-        line-height: 1.6;
+      :root {
+        --bg-base: #050505;
+        --bg-surface: #0a0a0a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --accent: #58a6ff;
+        --accent-glow: rgba(88, 166, 255, 0.2);
+        --border-color: #222222;
+        --grid-color: rgba(255, 255, 255, 0.04);
       }
-      h1 { color: #ffffff; font-size: 3rem; margin-bottom: 0.5rem; }
-      .subtitle { color: #8b949e; font-size: 1.2rem; margin-bottom: 3rem; border-bottom: 1px solid #30363d; padding-bottom: 2rem; }
-      a { color: #58a6ff; text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      .back-btn { display: inline-block; margin-bottom: 2rem; font-weight: bold; }
-      .post-list { list-style: none; padding: 0; }
-      .post-item { background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
-      .post-item h2 { margin: 0 0 0.5rem 0; color: #ffffff; }
-      .date { font-size: 0.85rem; color: #8b949e; }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      .header-wrapper {
+        position: relative;
+        text-align: center;
+        padding: 6rem 2rem 4rem;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--bg-base);
+        overflow: hidden;
+      }
+
+      .header-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+        mask-image: linear-gradient(to bottom, transparent, black 40%, transparent 90%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, transparent 90%);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      a.back-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: color 0.2s ease;
+        display: inline-block;
+        margin-bottom: 2rem;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 0.05em;
+      }
+
+      a.back-link:hover {
+        color: var(--text-main);
+      }
+
+      h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: #ffffff;
+        letter-spacing: -0.04em;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Use a grid to keep cards narrower and contained */
+      .log-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 4rem 2rem 8rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .log-card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 2rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .log-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .log-card:hover {
+        transform: translateY(-4px);
+        border-color: #333333;
+        background-color: #0c0c0c;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .log-card:hover::before {
+        opacity: 1;
+      }
+
+      .card-header h2 {
+        color: #ffffff;
+        font-size: 1.25rem;
+        margin: 0 0 0.5rem 0;
+        font-weight: 600;
+      }
+      
+      .card-header p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .log-meta {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 1.5rem;
+      }
     </style>
   </head>
   <body>
-    <a href="/" class="back-btn">&larr; Back to Engine Overview</a>
-    
-    <h1>Development Log</h1>
-    <p class="subtitle">Architecture decisions, rendering pipelines, and engineering notes.</p>
+    <main>
+      <header class="header-wrapper">
+        <div class="header-grid"></div>
+        <div class="header-content">
+          <a href="/" class="back-link">&larr; RETURN_TO_CORE</a>
+          <h1>Development Log</h1>
+          <p class="subtitle">Architecture decisions, renderer updates, and engine engineering notes.</p>
+        </div>
+      </header>
 
-    <ul class="post-list">
-      {allLogs.map((post) => (
-        <li class="post-item">
-          <a href={`/devlog/${post.id}`}>
-            <h2>{post.data.title}</h2>
+      <section class="log-container">
+        {posts.map((post) => (
+          <a href={`/devlog/${post.id}`} class="log-card">
+            <div class="card-header">
+              <h2 class="log-title">{post.data.title}</h2>
+              <p class="log-desc">{post.data.description || "Read technical details..."}</p>
+            </div>
+            <div class="log-meta">READ_FILE &rarr;</div>
           </a>
-          <span class="date">{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-          <p>{post.data.description}</p>
-        </li>
-      ))}
-    </ul>
+        ))}
+      </section>
+    </main>
   </body>
 </html>

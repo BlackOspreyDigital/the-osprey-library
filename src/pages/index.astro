@@ -7,47 +7,81 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Crescendo Engine | Custom 3D Vulkan Engine</title>
+    <title>Crescendo Engine | Custom 3D Vulkan Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
       :root {
-        --bg-color: #0d1117;
-        --text-main: #c9d1d9;
+        --bg-base: #050505;
+        --bg-surface: #0a0a0a;
+        --text-main: #ededed;
+        --text-muted: #888888;
         --accent: #58a6ff;
-        --accent-glow: rgba(88, 166, 255, 0.15);
-        --card-bg: #161b22;
-        --border-color: #30363d;
+        --accent-glow: rgba(88, 166, 255, 0.2);
+        --border-color: #222222;
+        --grid-color: rgba(255, 255, 255, 0.04);
       }
       
       body {
-        font-family: system-ui, -apple-system, sans-serif;
-        background-color: var(--bg-color);
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-base);
         color: var(--text-main);
         margin: 0;
         padding: 0;
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
       }
 
-      .hero {
+      /* 3D Perspective Grid Background */
+      .hero-wrapper {
+        position: relative;
         text-align: center;
-        padding: 8rem 2rem 6rem;
+        padding: 10rem 2rem 8rem;
         border-bottom: 1px solid var(--border-color);
-        background: radial-gradient(circle at top center, #1f2937 0%, transparent 70%);
+        background-color: var(--bg-base);
+        overflow: hidden;
+      }
+
+      .hero-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+        mask-image: linear-gradient(to bottom, transparent, black 40%, transparent 90%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, transparent 90%);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
       }
 
       h1 {
-        font-size: 4.5rem;
+        font-size: 5rem;
+        font-weight: 800;
         margin-bottom: 1rem;
         color: #ffffff;
-        letter-spacing: -0.05em;
-        text-shadow: 0 0 30px var(--accent-glow);
+        letter-spacing: -0.04em;
+        line-height: 1.1;
       }
 
       .subtitle {
-        font-size: 1.5rem;
-        color: #8b949e;
-        max-width: 650px;
-        margin: 0 auto 2.5rem;
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 3rem;
+        font-weight: 400;
       }
 
       .tech-stack {
@@ -58,49 +92,75 @@
       }
 
       .tag {
-        background-color: transparent;
+        font-family: 'JetBrains Mono', monospace;
+        background-color: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--border-color);
-        padding: 0.4rem 1.2rem;
-        border-radius: 99px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--accent);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        backdrop-filter: blur(4px);
       }
 
       .features {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 2rem;
-        padding: 5rem 2rem;
+        padding: 6rem 2rem;
         max-width: 1200px;
         margin: 0 auto;
       }
 
       .card {
-        background-color: var(--card-bg);
+        background-color: var(--bg-surface);
         border: 1px solid var(--border-color);
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 2.5rem;
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Subtle glow effect on cards */
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
 
       .card:hover {
         transform: translateY(-4px);
-        border-color: var(--accent);
-        box-shadow: 0 10px 30px var(--accent-glow);
+        border-color: #333333;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .card:hover::before {
+        opacity: 1;
       }
 
       .card h3 {
         color: #ffffff;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         margin-top: 0;
         margin-bottom: 1rem;
+        font-weight: 600;
+      }
+      
+      .card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
       }
 
       .cta-container {
-        padding: 2rem 2rem 6rem;
+        padding: 2rem 2rem 8rem;
       }
       
       .action-buttons {
@@ -113,85 +173,80 @@
 
       .btn {
         display: inline-block;
-        background-color: var(--accent);
-        color: #0d1117;
+        background-color: #ffffff;
+        color: #000000;
         text-decoration: none;
-        padding: 1rem 2.5rem;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-        transition: opacity 0.2s ease;
+        padding: 0.9rem 2.2rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: transform 0.2s ease, opacity 0.2s ease;
       }
 
       .btn:hover {
         opacity: 0.9;
+        transform: translateY(-1px);
       }
 
-      /* New Status Button Styles */
       .btn-status {
         display: inline-flex;
         align-items: center;
         gap: 0.6rem;
-        background-color: var(--card-bg);
+        background-color: transparent;
         color: var(--text-main);
         text-decoration: none;
-        padding: 1rem 2.5rem;
-        border-radius: 8px;
+        padding: 0.9rem 2.2rem;
+        border-radius: 6px;
         border: 1px solid var(--border-color);
-        font-weight: bold;
-        font-size: 1.1rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.9rem;
         transition: all 0.2s ease;
       }
 
       .btn-status:hover {
-        border-color: #8b949e;
-        transform: translateY(-2px);
+        border-color: #555555;
+        background-color: rgba(255, 255, 255, 0.02);
       }
 
       .status-icon {
-        color: #8b949e;
+        color: #555;
         transition: color 0.3s ease, filter 0.3s ease;
       }
 
       .btn-status.is-online .status-icon {
         color: #2ea043;
-        filter: drop-shadow(0 0 8px rgba(46, 160, 67, 0.4));
-      }
-      
-      .btn-status.is-online {
-        border-color: rgba(46, 160, 67, 0.3);
+        filter: drop-shadow(0 0 8px rgba(46, 160, 67, 0.6));
       }
 
       .btn-status.is-offline .status-icon {
         color: #f85149;
-        filter: drop-shadow(0 0 8px rgba(248, 81, 73, 0.4));
-      }
-      
-      .btn-status.is-offline {
-        border-color: rgba(248, 81, 73, 0.3);
+        filter: drop-shadow(0 0 8px rgba(248, 81, 73, 0.6));
       }
     </style>
   </head>
   <body>
     <main>
-      <header class="hero">
-        <h1>Crescendo Engine</h1>
-        <p class="subtitle">A high-performance, custom 3D game engine engineered for bare-metal control and rendering speed.</p>
-        <div class="tech-stack">
-          <span class="tag">C++ Architecture</span>
-          <span class="tag">Vulkan API</span>
-          <span class="tag">Linux Native</span>
+      <header class="hero-wrapper">
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+          <h1>Crescendo Engine</h1>
+          <p class="subtitle">A deterministic, memory-safe architecture written in C++ to guarantee maximum throughput and minimal latency.</p>
+          <div class="tech-stack">
+            <span class="tag">C++ Core</span>
+            <span class="tag">Vulkan API</span>
+            <span class="tag">Linux Native</span>
+          </div>
         </div>
       </header>
 
       <section class="features">
         <div class="card">
-          <h3>Vulkan Rendering Pipeline</h3>
+          <h3>Vulkan Pipeline</h3>
           <p>Built directly on the Vulkan API to leverage modern, low-overhead GPU commands, explicit memory management, and highly parallelized draw calls.</p>
         </div>
         <div class="card">
-          <h3>C++ Core</h3>
-          <p>A deterministic, memory-safe architecture written from the ground up in C++ to guarantee maximum throughput and minimal CPU latency.</p>
+          <h3>Procedural Voxel Generation</h3>
+          <p>Engineered for massive-scale procedural environments utilizing custom sub-allocators and octree memory structures.</p>
         </div>
         <div class="card">
           <h3>Development Log</h3>
@@ -204,8 +259,8 @@
           <a href="/devlog" class="btn">Read the Devlog</a>
           
           <a href="/status" class="btn-status" id="home-status-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="status-icon"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>
-            Server Status
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="status-icon"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>
+            SYS_STATUS
           </a>
         </div>
       </section>
