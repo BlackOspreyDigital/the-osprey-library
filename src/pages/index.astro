@@ -100,8 +100,15 @@
       }
 
       .cta-container {
-        text-align: center;
         padding: 2rem 2rem 6rem;
+      }
+      
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
       }
 
       .btn {
@@ -118,6 +125,50 @@
 
       .btn:hover {
         opacity: 0.9;
+      }
+
+      /* New Status Button Styles */
+      .btn-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        text-decoration: none;
+        padding: 1rem 2.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+      }
+
+      .btn-status:hover {
+        border-color: #8b949e;
+        transform: translateY(-2px);
+      }
+
+      .status-icon {
+        color: #8b949e;
+        transition: color 0.3s ease, filter 0.3s ease;
+      }
+
+      .btn-status.is-online .status-icon {
+        color: #2ea043;
+        filter: drop-shadow(0 0 8px rgba(46, 160, 67, 0.4));
+      }
+      
+      .btn-status.is-online {
+        border-color: rgba(46, 160, 67, 0.3);
+      }
+
+      .btn-status.is-offline .status-icon {
+        color: #f85149;
+        filter: drop-shadow(0 0 8px rgba(248, 81, 73, 0.4));
+      }
+      
+      .btn-status.is-offline {
+        border-color: rgba(248, 81, 73, 0.3);
       }
     </style>
   </head>
@@ -149,8 +200,37 @@
       </section>
 
       <section class="cta-container">
-        <a href="/devlog" class="btn">Read the Devlog</a>
+        <div class="action-buttons">
+          <a href="/devlog" class="btn">Read the Devlog</a>
+          
+          <a href="/status" class="btn-status" id="home-status-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="status-icon"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>
+            System Status
+          </a>
+        </div>
       </section>
     </main>
+
+    <script>
+      async function pingInfrastructure() {
+        const btn = document.getElementById('home-status-btn');
+        if (!btn) return;
+
+        try {
+          const response = await fetch('https://api.theospreylibrary.com/teamspeak');
+          const data = await response.json();
+
+          if (data.status === 'online') {
+            btn.classList.add('is-online');
+          } else {
+            btn.classList.add('is-offline');
+          }
+        } catch (error) {
+          btn.classList.add('is-offline');
+        }
+      }
+
+      pingInfrastructure();
+    </script>
   </body>
 </html>
