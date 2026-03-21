@@ -84,11 +84,12 @@
     </div>
 
     <script>
-      const dataIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>`;
-
       async function checkServerStatus() {
         const statusElement = document.getElementById('ts-status');
         if (!statusElement) return;
+
+        // We dynamically inject the hex color directly into the stroke
+        const getIcon = (color: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>`;
 
         try {
           const response = await fetch('https://api.theospreylibrary.com/teamspeak');
@@ -97,20 +98,20 @@
           if (data.status === 'online') {
             statusElement.innerHTML = `
               <div class="indicator text-online">
-                ${dataIcon}
+                ${getIcon('#2ea043')}
                 <span>Operational</span>
               </div>`;
           } else {
             statusElement.innerHTML = `
               <div class="indicator text-offline">
-                ${dataIcon}
+                ${getIcon('#f85149')}
                 <span>Offline</span>
               </div>`;
           }
         } catch (error) {
           statusElement.innerHTML = `
             <div class="indicator text-offline">
-              ${dataIcon}
+              ${getIcon('#f85149')}
               <span>Connection Failed</span>
             </div>`;
         }
