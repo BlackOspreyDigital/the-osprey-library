@@ -55,14 +55,14 @@ const { title, description, date } = Astro.props;
             /* --- THE FIX FOR THE WIDE IMAGES --- */
             /* Forces images to fit text margins, centers them, and indicates they are clickable */
             .prose img {
-                max-width: 75%; /* Shrinks the image to leave breathing room */
-                height: auto;
+                max-width: 60% !important; /* The !important flag forces Astro to obey this rule */
+                height: auto !important;
                 border-radius: 8px;
                 display: block;
                 margin: 2.5rem auto; /* The 'auto' keeps it perfectly centered */
                 border: 1px solid var(--border-color);
                 cursor: zoom-in;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Adds a subtle drop shadow */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
 
             /* --- LIGHTBOX (ZOOM) CSS --- */
