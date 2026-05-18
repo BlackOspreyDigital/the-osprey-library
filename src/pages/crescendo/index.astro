@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import DocLayout from '../../layouts/DocLayout.astro';
+
+const allDocs = await getCollection('crescendo');
+
+// Optional: Sort documents by date if needed
+const sortedDocs = allDocs.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<DocLayout 
+  title="Crescendo Documentation" 
+  description="Technical specifications, architecture notes, and implementation details for the Crescendo Vulcan graphics render."
+>
+  <div class="docs-index">
+    <h2>Available Modules</h2>
+    <div class="doc-list">
+      {sortedDocs.map((doc) => (
+        <a href={`/crescendo/${doc.id}`} class="doc-item">
+          <h3>{doc.data.title}</h3>
+          <p>{doc.data.description}</p>
+          <span class="tag">Module: {doc.data.module}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</DocLayout>
+
+<style>
+  .docs-index h2 {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .doc-item {
+    display: block;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .doc-item:hover {
+    border-color: var(--accent);
+  }
+
+  .doc-item h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-main);
+    font-size: 1.25rem;
+  }
+
+  .doc-item p {
+    margin: 0 0 1rem 0;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #111318;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-transform: capitalize;
+  }
+</style>

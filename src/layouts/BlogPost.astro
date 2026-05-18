@@ -6,7 +6,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 
 // Prop definition for your devlog schema
-type Props = CollectionEntry<'devlog'>['data'];
+type Props = Partial<CollectionEntry<'blog'>['data']>;
 
 // Destructuring props, perfectly matching your schema
 const { title, description, date } = Astro.props;

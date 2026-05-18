@@ -2,16 +2,22 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, passthroughImageService } from 'astro/config';
 
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
   site: 'https://theospreylibrary.com',
   integrations: [mdx(), sitemap()],
+
   image: {
     service: passthroughImageService()
   },
+
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
       wrap: true,
     },
   },
+
+  adapter: cloudflare(),
 });
