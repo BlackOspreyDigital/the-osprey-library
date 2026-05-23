@@ -1,159 +1,59 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import ShaderBackground from '../components/ShaderBackground.astro'; // <-- 1. Import it here
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+// src/pages/index.astro
+import '../styles/global.css';
+
+// Build-time TeamSpeak 6 status fetch
+const TS_API_URL = "http://YOUR_VPS_IP:PORT/api/status"; 
+let tsStatus = "Status Unavailable";
+let isOnline = false;
+
+try {
+    const response = await fetch(TS_API_URL);
+    if (response.ok) {
+        const data = await response.json();
+        isOnline = data.online; 
+        tsStatus = isOnline ? `Online - ${data.clients_online} connected` : "Offline";
+    }
+} catch (error) {
+    console.error("Failed to fetch TeamSpeak status during build:", error);
+}
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				display: flex;
-				flex-direction: column;
-				min-height: 80vh; 
-				align-items: center;
-				justify-content: center;
-				padding: 2rem;
-				position: relative; 
-				z-index: 1; 
-			}
-			.navigator-list {
-				display: flex;
-				flex-direction: column;
-				gap: 1.5rem;
-				width: 100%;
-				max-width: 800px; /* Constrains the width for a sleek horizontal list */
-			}
-			.nav-card {
-				background: rgba(30, 30, 46, 0.85); 
-				backdrop-filter: blur(4px); 
-				border: 1px solid #333;
-				border-radius: 8px;
-				display: flex; /* Switched to horizontal row */
-				flex-direction: row;
-				align-items: stretch;
-				text-decoration: none;
-				color: inherit;
-				overflow: hidden; /* Keeps thumbnail corners rounded inside the card */
-				transition: transform 0.2s ease-out, border-color 0.2s ease-out, background 0.2s;
-			}
-			.nav-card:hover {
-				transform: translateX(8px); /* Slides to the right on hover instead of up */
-				border-color: #ff5905; /* Pulled the Crescendo Orange into the border hover */
-				background: rgba(30, 30, 46, 0.95);
-			}
-			.card-thumb {
-				width: 240px;
-				background: rgba(0, 0, 0, 0.5); /* Placeholder dark box */
-				border-right: 1px solid #333;
-				flex-shrink: 0;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				color: #555;
-				font-size: 0.9rem;
-				/* When you add images, you can apply: background-image: url(...); background-size: cover; */
-			}
-			.card-content {
-				padding: 2rem 2.5rem;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				text-align: left;
-			}
-			.card-content h2 {
-				margin: 0 0 0.5rem 0;
-				font-size: 1.8rem;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-			}
-			.card-content p {
-				margin: 0;
-				color: #a6accd;
-				font-size: 1rem;
-				line-height: 1.5;
-			}
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Osprey Library - Crescendo Engine</title>
+        <meta name="description" content="Development Hub for the Crescendo Engine" />
+    </head>
+    <body>
+        <canvas id="shader-canvas"></canvas>
 
-			/* Mobile Responsiveness: Stacks the image on top of text on small screens */
-			@media (max-width: 600px) {
-				.nav-card {
-					flex-direction: column;
-				}
-				.card-thumb {
-					width: 100%;
-					height: 150px;
-					border-right: none;
-					border-bottom: 1px solid #333;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<ShaderBackground />
+        <main class="landing-container">
+            <header>
+                <h1>The Osprey Library</h1>
+                <p>Development Hub for the Crescendo Engine</p>
+            </header>
 
-		<main>
-			<div class="navigator-list">
-				<a href="/devlog" class="nav-card">
-					<div class="card-thumb">[ THUMBNAIL ]</div>
-					<div class="card-content">
-						<h2>Development</h2>
-						<p>Technical logs, engine updates, and project deep dives.</p>
-					</div>
-				</a>
-				<a href="/crescendo" class="nav-card">
-					<div class="card-thumb">[ THUMBNAIL ]</div>
-					<div class="card-content">
-						<h2>Crescendo Engine</h2>
-						<p>Custom Vulkan graphics renderer and engine technology.</p>
-					</div>
-				</a>
-				<a href="#" class="nav-card">
-					<div class="card-thumb">[ THUMBNAIL ]</div>
-					<div class="card-content">
-						<h2>Community</h2>
-						<p>Private server access and collaboration spaces.</p>
-					</div>
-				</a>
-				<a href="/about" class="nav-card">
-					<div class="card-thumb">[ THUMBNAIL ]</div>
-					<div class="card-content">
-						<h2>About</h2>
-						<p>Knowledge archival, system architecture, and contact info.</p>
-					</div>
-				</a>
-			</div>
-		</main>
-		<Footer />
-	</body>
-		<Header />
-		
-		<ShaderBackground />
+            <nav class="primary-nav">
+                <a href="/crescendo" class="nav-link">Devlog & Tech Demos</a>
+                <a href="/docs" class="nav-link">Documentation</a>
+                <a href="/contribute" class="nav-link">Help Us Build</a>
+                <a href="/license" class="nav-link">License</a>
+            </nav>
 
-		<main>
-			<div class="navigator-grid">
-				<a href="/devlog" class="nav-card">
-					<h2>Development</h2>
-					<p>Technical logs, engine updates, and project deep dives.</p>
-				</a>
-				<a href="/crescendo" class="nav-card">
-					<h2>Crescendo Engine</h2>
-					<p>Custom Vulkan graphics renderer and engine technology.</p>
-				</a>
-				<a href="#" class="nav-card">
-					<h2>Community</h2>
-					<p>Private server access and collaboration spaces.</p>
-				</a>
-				<a href="/about" class="nav-card">
-					<h2>About</h2>
-					<p>Knowledge archival, system architecture, and contact info.</p>
-				</a>
-			</div>
-		</main>
-		<Footer />
-	</body>
+            <div class="community-section">
+                <a href="/status" class="community-button">
+                    <span class={isOnline ? "indicator online" : "indicator offline"}></span>
+                    TeamSpeak 6 Access: {tsStatus}
+                </a>
+            </div>
+
+            <footer class="external-links">
+                <a href="https://github.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer">X</a>
+            </footer>
+        </main>
+    </body>
 </html>

@@ -1,80 +1,91 @@
 ---
+// src/pages/crescendo/index.astro
 import { getCollection } from 'astro:content';
-import DocLayout from '../../layouts/DocLayout.astro';
+import '../../styles/global.css';
 
-const allDocs = await getCollection('crescendo');
-
-// Optional: Sort documents by date if needed
-const sortedDocs = allDocs.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+// Fetch all devlog posts and sort them newest to oldest
+const posts = (await getCollection('crescendo')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
 
-<DocLayout 
-  title="Crescendo Documentation" 
-  description="Technical specifications, architecture notes, and implementation details for the Crescendo Vulcan graphics render."
->
-  <div class="docs-index">
-    <h2>Available Modules</h2>
-    <div class="doc-list">
-      {sortedDocs.map((doc) => (
-        <a href={`/crescendo/${doc.id}`} class="doc-item">
-          <h3>{doc.data.title}</h3>
-          <p>{doc.data.description}</p>
-          <span class="tag">Module: {doc.data.module}</span>
-        </a>
-      ))}
-    </div>
-  </div>
-</DocLayout>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Crescendo Engine Devlog</title>
+    </head>
+    <body>
+        <canvas id="shader-canvas"></canvas>
+
+        <main class="landing-container" style="max-width: 1200px;">
+            <header style="margin-bottom: 4rem;">
+                <h1>Crescendo Engine Devlog</h1>
+                <p>Architecture notes, rendering updates, and tech demos.</p>
+                <a href="/" class="nav-link" style="display: inline-block; margin-top: 1rem;">&larr; Back to Hub</a>
+            </header>
+
+            <div class="devlog-grid">
+                {posts.map((post) => (
+                    <a href={`/crescendo/${post.slug}/`} class="grid-tile">
+                        {post.data.heroImage && (
+                            <img src={post.data.heroImage} alt="" class="tile-image" />
+                        )}
+                        <h2 class="tile-title">{post.data.title}</h2>
+                        <p class="tile-date">
+                            {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </p>
+                        <p class="tile-desc">{post.data.description}</p>
+                    </a>
+                ))}
+            </div>
+        </main>
+    </body>
+</html>
 
 <style>
-  .docs-index h2 {
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .doc-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .doc-item {
-    display: block;
-    padding: 1.5rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    text-decoration: none;
-    transition: border-color 0.2s ease;
-  }
-
-  .doc-item:hover {
-    border-color: var(--accent);
-  }
-
-  .doc-item h3 {
-    margin: 0 0 0.5rem 0;
-    color: var(--text-main);
-    font-size: 1.25rem;
-  }
-
-  .doc-item p {
-    margin: 0 0 1rem 0;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: #111318;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 0.85rem;
-    color: var(--accent);
-    text-transform: capitalize;
-  }
+    .devlog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        text-align: left;
+    }
+    .grid-tile {
+        background: #161b22;
+        border: 1px solid #30363d;
+        padding: 2rem;
+        border-radius: 6px;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.15s ease-out, border-color 0.15s ease-out;
+        display: flex;
+        flex-direction: column;
+    }
+    .grid-tile:hover {
+        transform: translateY(-4px);
+        border-color: #8b949e;
+    }
+    .tile-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+    }
+    .tile-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        color: #58a6ff;
+    }
+    .tile-date {
+        margin: 0 0 1rem 0;
+        font-size: 0.9rem;
+        color: #8b949e;
+    }
+    .tile-desc {
+        margin: 0;
+        color: #c9d1d9;
+        line-height: 1.5;
+    }
 </style>

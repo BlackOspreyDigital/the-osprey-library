@@ -1,0 +1,74 @@
+---
+// src/layouts/DevlogPost.astro
+import '../styles/global.css';
+
+const { title, description, pubDate, heroImage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title} - Crescendo Engine</title>
+        <meta name="description" content={description} />
+    </head>
+    <body>
+        <canvas id="shader-canvas"></canvas>
+        
+        <article class="post-container">
+            <a href="/crescendo" style="color: #8b949e; text-decoration: none; display: inline-block; margin-bottom: 2rem;">&larr; Back to Devlog</a>
+            
+            {heroImage && <img src={heroImage} alt="" class="hero-image" />}
+            
+            <h1 class="post-title">{title}</h1>
+            <p class="post-date">
+                {pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            
+            <hr class="divider" />
+            
+            <div class="post-content">
+                <slot /> </div>
+        </article>
+    </body>
+</html>
+
+<style>
+    .post-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+        background-color: transparent;
+    }
+    .hero-image {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    .post-title {
+        font-size: 2.5rem;
+        color: #58a6ff;
+        margin: 0 0 0.5rem 0;
+    }
+    .post-date {
+        color: #8b949e;
+        margin: 0 0 2rem 0;
+    }
+    .divider {
+        border: 0;
+        border-top: 1px solid #30363d;
+        margin-bottom: 2rem;
+    }
+    .post-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        color: #c9d1d9;
+    }
+    /* Basic markdown styling */
+    .post-content :global(h2) { color: #fff; margin-top: 2rem; }
+    .post-content :global(h3) { color: #fff; margin-top: 1.5rem; }
+    .post-content :global(pre) { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d;}
+    .post-content :global(code) { font-family: monospace; background: #21262d; padding: 0.2rem 0.4rem; border-radius: 3px; }
+    .post-content :global(video) { width: 100%; border-radius: 6px; margin: 2rem 0; }
+</style>

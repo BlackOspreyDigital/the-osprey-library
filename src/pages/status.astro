@@ -1,0 +1,58 @@
+---
+// src/pages/status.astro
+import '../styles/global.css';
+
+const TS_API_URL = "http://YOUR_VPS_IP:PORT/api/status"; 
+let statusData = null;
+let isOnline = false;
+
+try {
+    const response = await fetch(TS_API_URL);
+    if (response.ok) {
+        statusData = await response.json();
+        isOnline = statusData.online; 
+    }
+} catch (error) {
+    console.error("Failed to fetch TeamSpeak status:", error);
+}
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Network Status - The Osprey Library</title>
+    </head>
+    <body>
+        <canvas id="shader-canvas"></canvas>
+
+        <main class="landing-container">
+            <header>
+                <h1>Network Status</h1>
+                <p>Live metrics from the local infrastructure.</p>
+                <a href="/" class="nav-link" style="display: inline-block; margin-top: 1rem;">&larr; Return Home</a>
+            </header>
+
+            <div style="background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 2.5rem; margin-top: 3rem; text-align: left;">
+                <h2 style="color: #58a6ff; margin-top: 0; font-size: 1.8rem;">TeamSpeak 6 Server</h2>
+                <hr style="border: 0; border-top: 1px solid #30363d; margin: 1.5rem 0;" />
+                
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    <span class={isOnline ? "indicator online" : "indicator offline"}></span>
+                    <strong>Status:</strong> {isOnline ? "Operational" : "Unreachable"}
+                </div>
+                
+                {isOnline && statusData ? (
+                    <ul style="list-style: none; padding: 0; color: #8b949e; line-height: 1.8;">
+                        <li><strong>Clients Connected:</strong> {statusData.clients_online}</li>
+                        <li><strong>Server Uptime:</strong> {statusData.uptime}</li>
+                        <li><strong>Address:</strong> ts.theospreylibrary.com</li>
+                    </ul>
+                ) : (
+                    <p style="color: #8b949e;">Telemetry currently unavailable. The server may be restarting or the Docker container is offline.</p>
+                )}
+            </div>
+        </main>
+    </body>
+</html>
