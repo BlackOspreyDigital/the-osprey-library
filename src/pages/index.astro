@@ -5,29 +5,8 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import '../styles/global.css';
 
 const posts = (await getCollection('crescendo')).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
-
-// Defensive Fetch: Use a short timeout so the build doesn't hang
-let tsStatus = "Status Unavailable";
-let isOnline = false;
-
-try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
-    
-    const response = await fetch("http://72.62.171.229/teamspeak", { signal: controller.signal });
-    clearTimeout(timeoutId);
-    
-    if (response.ok) {
-        const data = await response.json();
-        isOnline = data.status === 'online';
-        tsStatus = isOnline ? "Online" : "Offline";
-    }
-} catch (error) {
-    // Fail silently so the build succeeds
-    tsStatus = "Status Offline (Check Firewall)";
-}
 ---
 
 <SiteLayout>
