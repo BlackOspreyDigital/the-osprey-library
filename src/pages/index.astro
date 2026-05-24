@@ -1,9 +1,9 @@
 ---
 // src/pages/index.astro
-import '../styles/global.css';
+import SiteLayout from '../layouts/SiteLayout.astro';
 
 // Build-time TeamSpeak 6 status fetch
-const TS_API_URL = "http://YOUR_VPS_IP:PORT/api/status"; 
+const TS_API_URL = "http://72.62.171.229/teamspeak"; 
 let tsStatus = "Status Unavailable";
 let isOnline = false;
 
@@ -11,49 +11,81 @@ try {
     const response = await fetch(TS_API_URL);
     if (response.ok) {
         const data = await response.json();
-        isOnline = data.online; 
-        tsStatus = isOnline ? `Online - ${data.clients_online} connected` : "Offline";
+        isOnline = data.status === 'online';
+        tsStatus = isOnline ? "Online" : "Offline";
     }
 } catch (error) {
-    console.error("Failed to fetch TeamSpeak status during build:", error);
+    console.error("TeamSpeak fetch error:", error);
 }
 ---
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>The Osprey Library - Crescendo Engine</title>
-        <meta name="description" content="Development Hub for the Crescendo Engine" />
-    </head>
-    <body>
-        <canvas id="shader-canvas"></canvas>
+<SiteLayout>
+    <main class="landing-container">
+        <header>
+            <h1>The Osprey Library</h1>
+            <p>Development Hub for the Crescendo Engine</p>
+        </header>
 
-        <main class="landing-container">
-            <header>
-                <h1>The Osprey Library</h1>
-                <p>Development Hub for the Crescendo Engine</p>
-            </header>
+        <nav class="primary-nav">
+            <a href="/crescendo" class="nav-link">Devlog & Tech Demos</a>
+            <a href="/docs" class="nav-link">Documentation</a>
+            <a href="https://github.com/YOUR_HANDLE/crescendo" class="nav-link" target="_blank" rel="noopener noreferrer">Help Us Build</a>
+            <a href="/license" class="nav-link">License</a>
+        </nav>
 
-            <nav class="primary-nav">
-                <a href="/crescendo" class="nav-link">Devlog & Tech Demos</a>
-                <a href="/docs" class="nav-link">Documentation</a>
-                <a href="/contribute" class="nav-link">Help Us Build</a>
-                <a href="/license" class="nav-link">License</a>
-            </nav>
+        <div class="community-section">
+            <a href="/status" class="community-button">
+                <span class={isOnline ? "indicator online" : "indicator offline"}></span>
+                TeamSpeak 6 Access: {tsStatus}
+            </a>
+        </div>
 
-            <div class="community-section">
-                <a href="/status" class="community-button">
-                    <span class={isOnline ? "indicator online" : "indicator offline"}></span>
-                    TeamSpeak 6 Access: {tsStatus}
-                </a>
-            </div>
+        <footer class="external-links">
+            <a href="https://x.com/Android_NI93" target="_blank" rel="noopener noreferrer">X</a>
+        </footer>
+    </main>
+</SiteLayout>
 
-            <footer class="external-links">
-                <a href="https://github.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer">GitHub</a>
-                <a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer">X</a>
-            </footer>
-        </main>
-    </body>
-</html>
+<style>
+    .landing-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 80vh;
+        color: #c9d1d9;
+    }
+    header h1 {
+        font-size: 4rem;
+        color: #58a6ff;
+        margin: 0 0 1rem 0;
+        letter-spacing: 2px;
+    }
+    header p {
+        font-size: 1.2rem;
+        color: #8b949e;
+        margin: 0 0 3rem 0;
+        letter-spacing: 1px;
+    }
+    .primary-nav, .community-section, .external-links {
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1.5rem;
+    }
+    .nav-link, .community-button, .external-links a {
+        color: #58a6ff;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+    }
+    .nav-link:hover, .community-button:hover, .external-links a:hover {
+        opacity: 0.8;
+    }
+    .indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    .indicator.online { background-color: #3fb950; }
+    .indicator.offline { background-color: #f85149; }
+</style>

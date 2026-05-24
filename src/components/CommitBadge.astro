@@ -1,0 +1,65 @@
+---
+// src/components/CommitBadge.astro
+interface Props {
+    hash: string;
+    message: string;
+    repo?: string;
+}
+
+// Default to your primary repository structure
+const { hash, message, repo = "YourUsername/crescendo" } = Astro.props;
+
+const shortHash = hash.substring(0, 7);
+const commitUrl = `https://github.com/BlackOspreyDigital/CrescendoEngine/commit/${hash}`;
+---
+
+<a href={commitUrl} class="commit-badge" target="_blank" rel="noopener noreferrer">
+    <div class="commit-icon">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M10.5 7.75a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm1.43.75a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 1 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 1 1 0 1.5h-3.32Z"></path>
+        </svg>
+    </div>
+    <div class="commit-details">
+        <span class="commit-hash">{shortHash}</span>
+        <span class="commit-message">{message}</span>
+    </div>
+</a>
+
+<style>
+    .commit-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        padding: 12px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #c9d1d9;
+        margin: 1.5rem 0;
+        transition: border-color 0.15s ease, transform 0.15s ease;
+        width: fit-content;
+    }
+    .commit-badge:hover {
+        border-color: #8b949e;
+        transform: translateY(-2px);
+    }
+    .commit-icon {
+        color: #8b949e;
+        display: flex;
+        align-items: center;
+    }
+    .commit-details {
+        display: flex;
+        flex-direction: column;
+    }
+    .commit-hash {
+        font-family: monospace;
+        color: #58a6ff;
+        font-size: 0.9rem;
+    }
+    .commit-message {
+        font-size: 0.85rem;
+        color: #8b949e;
+    }
+</style>

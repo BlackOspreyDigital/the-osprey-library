@@ -1,91 +1,91 @@
 ---
 // src/pages/crescendo/index.astro
 import { getCollection } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import '../../styles/global.css';
 
-// Fetch all devlog posts and sort them newest to oldest
 const posts = (await getCollection('crescendo')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Crescendo Engine Devlog</title>
-    </head>
-    <body>
-        <canvas id="shader-canvas"></canvas>
+<SiteLayout>
+    <header style="margin-bottom: 3rem;">
+        <h1 style="color: #58a6ff; font-size: 2.5rem; margin: 0;">DEVELOPMENT BLOG</h1>
+        <p style="color: #8b949e; margin-top: 0.5rem;">A LOG OF COMMIT HISTORY AND TECH DEMOS</p>
+    </header>
 
-        <main class="landing-container" style="max-width: 1200px;">
-            <header style="margin-bottom: 4rem;">
-                <h1>Crescendo Engine Devlog</h1>
-                <p>Architecture notes, rendering updates, and tech demos.</p>
-                <a href="/" class="nav-link" style="display: inline-block; margin-top: 1rem;">&larr; Back to Hub</a>
-            </header>
-
-            <div class="devlog-grid">
-                {posts.map((post) => (
-                    <a href={`/crescendo/${post.slug}/`} class="grid-tile">
-                        {post.data.heroImage && (
-                            <img src={post.data.heroImage} alt="" class="tile-image" />
-                        )}
-                        <h2 class="tile-title">{post.data.title}</h2>
-                        <p class="tile-date">
-                            {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                        </p>
-                        <p class="tile-desc">{post.data.description}</p>
-                    </a>
-                ))}
-            </div>
-        </main>
-    </body>
-</html>
+    <div class="devlog-grid">
+        {posts.map((post) => (
+            <a href={`/crescendo/${post.id}/`} class={`grid-tile ${post.data.status || ''}`}>
+                {/* Conditionally render the image if it exists in frontmatter */}
+                {post.data.heroImage && (
+                    <img src={post.data.heroImage} alt="" class="tile-bg-image" />
+                )}
+                
+                {/* Wrap the text in a content div to float above the image */}
+                <div class="tile-content">
+                    <h2 class="tile-title">{post.data.title}</h2>
+                    <p class="tile-date">
+                        {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </p>
+                    <p class="tile-desc">{post.data.description}</p>
+                </div>
+            </a>
+        ))}
+    </div>
+</SiteLayout>
 
 <style>
     .devlog-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
-        text-align: left;
+        grid-template-columns: repeat(3, 1fr); /* Maintains the fixed 3-column dashboard look */
+        gap: 1.5rem;
     }
     .grid-tile {
+        height: 200px;
         background: #161b22;
         border: 1px solid #30363d;
-        padding: 2rem;
-        border-radius: 6px;
+        padding: 1.5rem;
         text-decoration: none;
         color: inherit;
         transition: transform 0.15s ease-out, border-color 0.15s ease-out;
+        
+        /* Flexbox properties */
         display: flex;
         flex-direction: column;
+        justify-content: flex-end; /* <-- ADD THIS LINE */
+        
+        /* Containment field */
+        position: relative; 
+        overflow: hidden; 
     }
     .grid-tile:hover {
         transform: translateY(-4px);
         border-color: #8b949e;
     }
-    .tile-image {
+
+    .tile-bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        height: 200px;
+        height: 100%;
         object-fit: cover;
-        border-radius: 4px;
-        margin-bottom: 1.5rem;
+        opacity: 0.35; /* dims the image so white text remains readable */
+        z-index: 0;
+        transition: opacity 0.2s ease-in-out;
     }
-    .tile-title {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.5rem;
-        color: #58a6ff;
+
+    .grid-tile:hover .tile-bg-image {
+        opacity: 0.6; /* brightens the image on hover */
     }
-    .tile-date {
-        margin: 0 0 1rem 0;
-        font-size: 0.9rem;
-        color: #8b949e;
+    
+    .title-content {
+        position: relative;
+        z-index: 1; /* forces text to render on top of the image */
     }
-    .tile-desc {
-        margin: 0;
-        color: #c9d1d9;
-        line-height: 1.5;
-    }
+    .tile-title { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #58a6ff; }
+    .tile-date { margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #8b949e; }
+    .tile-desc { margin: 0; font-size: 0.9rem; color: #c9d1d9; }
 </style>
