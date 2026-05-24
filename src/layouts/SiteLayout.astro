@@ -100,7 +100,7 @@ import '../styles/global.css';
 
         // 2. Fragment Shader (Auroric Footer Glow - 60px Fixed Height)
         const fsSource = `
-            precision mediump float;
+            precision highp float;
             uniform float u_time;
             uniform vec2 u_resolution;
 
@@ -196,7 +196,10 @@ import '../styles/global.css';
 
             // Render Loop
             const render = (time: number) => {
-                gl.uniform1f(timeLocation, time * 0.001);
+                // Convert to seconds and apply modulo to cap the float size
+                const safeTime = (time * 0.001) % 1000.0;
+                
+                gl.uniform1f(timeLocation, safeTime);
                 gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
                 
                 gl.drawArrays(gl.TRIANGLES, 0, 6);
