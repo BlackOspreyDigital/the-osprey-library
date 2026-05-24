@@ -1,82 +1,127 @@
 ---
 // src/pages/index.astro
-import { getCollection } from 'astro:content';
-import SiteLayout from '../layouts/SiteLayout.astro';
 import '../styles/global.css';
-
-const posts = (await getCollection('crescendo')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
 ---
 
-<SiteLayout>
-    <header style="margin-bottom: 3rem;">
-        <h1 style="color: #58a6ff; font-size: 2.5rem; margin: 0;">DEVELOPMENT BLOG</h1>
-        <p style="color: #8b949e; margin-top: 0.5rem;">A LOG OF COMMIT HISTORY AND TECH DEMOS</p>
-    </header>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Osprey Library</title>
+</head>
+<body class="hub-body">
+    <main class="hub-container">
+        <h1 class="hub-title">The Osprey Library</h1>
+        <p class="hub-subtitle">Development Hub for the Crescendo Engine</p>
 
-    <div class="devlog-grid">
-        {posts.map((post) => (
-            <a href={`/crescendo/${post.id}/`} class={`grid-tile ${post.data.status || ''}`}>
-                {post.data.heroImage && (
-                    <img src={post.data.heroImage} alt="" class="tile-bg-image" />
-                )}
-                
-                <div class="tile-content">
-                    <h2 class="tile-title">{post.data.title}</h2>
-                    <p class="tile-date">
-                        {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </p>
-                    <p class="tile-desc">{post.data.description}</p>
-                </div>
-            </a>
-        ))}
-    </div>
-</SiteLayout>
+        <div class="button-grid">
+            <a href="/crescendo/" class="hub-btn">Devlog & Tech Demos</a>
+            <a href="/docs/" class="hub-btn">Documentation</a>
+            <a href="/contribute/" class="hub-btn">Help Us Build</a>
+            <a href="/license/" class="hub-btn">License</a>
+        </div>
+
+        <a href="#" class="ts-btn">
+            <span class="status-dot"></span>
+            TeamSpeak 6 Access: Online
+        </a>
+
+        <div class="social-links">
+            <a href="https://github.com/BlackOspreyDigital" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="#" target="_blank" rel="noopener noreferrer">X</a>
+        </div>
+    </main>
+</body>
+</html>
 
 <style>
-    .devlog-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-    }
-    .grid-tile {
-        height: 200px;
-        background: #161b22;
-        border: 1px solid #30363d;
-        padding: 1.5rem;
-        text-decoration: none;
-        color: inherit;
-        transition: transform 0.15s ease-out, border-color 0.15s ease-out;
+    .hub-body {
+        background-color: #0d1117;
+        color: #c9d1d9;
+        font-family: system-ui, -apple-system, sans-serif;
         display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        position: relative;
-        overflow: hidden; 
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
     }
-    .grid-tile:hover {
-        transform: translateY(-4px);
+    .hub-container {
+        text-align: center;
+        max-width: 800px;
+        padding: 2rem;
+    }
+    .hub-title {
+        color: #58a6ff;
+        font-size: 3.5rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    .hub-subtitle {
+        color: #8b949e;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+    }
+    .button-grid {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+    }
+    .hub-btn {
+        background: transparent;
+        color: #c9d1d9;
+        border: 1px solid #30363d;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .hub-btn:hover {
+        background: #161b22;
         border-color: #8b949e;
     }
-    .tile-bg-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.35;
-        z-index: 0;
-        transition: opacity 0.2s ease-in-out;
+    .ts-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #21262d;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        padding: 0.75rem 2rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 3.5rem;
+        transition: background 0.2s ease;
     }
-    .grid-tile:hover .tile-bg-image {
-        opacity: 0.6;
+    .ts-btn:hover {
+        background: #30363d;
     }
-    .tile-content {
-        position: relative;
-        z-index: 1;
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #238636;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(35, 134, 54, 0.6);
     }
-    .tile-title { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #58a6ff; }
-    .tile-date { margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #8b949e; }
-    .tile-desc { margin: 0; font-size: 0.9rem; color: #c9d1d9; }
-</style>
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+    }
+    .social-links a {
+        color: #8b949e;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s ease;
+    }
+    .social-links a:hover {
+        color: #58a6ff;
+    }
+</style is:global>
