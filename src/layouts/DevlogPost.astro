@@ -70,4 +70,21 @@ const { title, description, pubDate, heroImage } = Astro.props;
     .post-content :global(pre) { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d;}
     .post-content :global(code) { font-family: monospace; background: #21262d; padding: 0.2rem 0.4rem; border-radius: 3px; }
     .post-content :global(video) { width: 100%; border-radius: 6px; margin: 2rem 0; }
+
+    /* Constrain paragraphs for readability */
+    .post-content :global(p) { 
+        max-width: 65ch; 
+        margin-bottom: 1.5rem; 
+    }
+
+    /* Keep markdown images responsive and flush with the text */
+    .post-content :global(img) {
+        width: 100%;          /* Force the image to expand... */
+        max-width: 65ch;      /* ...but lock it to the exact width of the paragraphs */
+        height: auto;
+        border-radius: 6px;
+        border: 1px solid #30363d;
+        margin: 2rem 0;
+        display: block;       /* Prevents weird inline spacing issues */
+    }
 </style>
