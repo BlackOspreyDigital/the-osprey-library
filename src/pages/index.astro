@@ -1,91 +1,82 @@
 ---
 // src/pages/index.astro
+import { getCollection } from 'astro:content';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import '../styles/global.css';
 
-// Build-time TeamSpeak 6 status fetch
-const TS_API_URL = "http://72.62.171.229/teamspeak"; 
-let tsStatus = "Status Unavailable";
-let isOnline = false;
-
-try {
-    const response = await fetch(TS_API_URL);
-    if (response.ok) {
-        const data = await response.json();
-        isOnline = data.status === 'online';
-        tsStatus = isOnline ? "Online" : "Offline";
-    }
-} catch (error) {
-    console.error("TeamSpeak fetch error:", error);
-}
+const posts = (await getCollection('crescendo')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
 <SiteLayout>
-    <main class="landing-container">
-        <header>
-            <h1>The Osprey Library</h1>
-            <p>Development Hub for the Crescendo Engine</p>
-        </header>
+    <header style="margin-bottom: 3rem;">
+        <h1 style="color: #58a6ff; font-size: 2.5rem; margin: 0;">DEVELOPMENT BLOG</h1>
+        <p style="color: #8b949e; margin-top: 0.5rem;">A LOG OF COMMIT HISTORY AND TECH DEMOS</p>
+    </header>
 
-        <nav class="primary-nav">
-            <a href="/crescendo" class="nav-link">Devlog & Tech Demos</a>
-            <a href="/docs" class="nav-link">Documentation</a>
-            <a href="https://github.com/YOUR_HANDLE/crescendo" class="nav-link" target="_blank" rel="noopener noreferrer">Help Us Build</a>
-            <a href="/license" class="nav-link">License</a>
-        </nav>
-
-        <div class="community-section">
-            <a href="/status" class="community-button">
-                <span class={isOnline ? "indicator online" : "indicator offline"}></span>
-                TeamSpeak 6 Access: {tsStatus}
+    <div class="devlog-grid">
+        {posts.map((post) => (
+            <a href={`/crescendo/${post.id}/`} class={`grid-tile ${post.data.status || ''}`}>
+                {post.data.heroImage && (
+                    <img src={post.data.heroImage} alt="" class="tile-bg-image" />
+                )}
+                
+                <div class="tile-content">
+                    <h2 class="tile-title">{post.data.title}</h2>
+                    <p class="tile-date">
+                        {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </p>
+                    <p class="tile-desc">{post.data.description}</p>
+                </div>
             </a>
-        </div>
-
-        <footer class="external-links">
-            <a href="https://x.com/Android_NI93" target="_blank" rel="noopener noreferrer">X</a>
-        </footer>
-    </main>
+        ))}
+    </div>
 </SiteLayout>
 
 <style>
-    .landing-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        height: 80vh;
-        color: #c9d1d9;
-    }
-    header h1 {
-        font-size: 4rem;
-        color: #58a6ff;
-        margin: 0 0 1rem 0;
-        letter-spacing: 2px;
-    }
-    header p {
-        font-size: 1.2rem;
-        color: #8b949e;
-        margin: 0 0 3rem 0;
-        letter-spacing: 1px;
-    }
-    .primary-nav, .community-section, .external-links {
-        margin-bottom: 2rem;
-        display: flex;
+    .devlog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
     }
-    .nav-link, .community-button, .external-links a {
-        color: #58a6ff;
+    .grid-tile {
+        height: 200px;
+        background: #161b22;
+        border: 1px solid #30363d;
+        padding: 1.5rem;
         text-decoration: none;
-        transition: opacity 0.2s ease;
+        color: inherit;
+        transition: transform 0.15s ease-out, border-color 0.15s ease-out;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        position: relative;
+        overflow: hidden; 
     }
-    .nav-link:hover, .community-button:hover, .external-links a:hover {
-        opacity: 0.8;
+    .grid-tile:hover {
+        transform: translateY(-4px);
+        border-color: #8b949e;
     }
-    .indicator {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 8px;
+    .tile-bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.35;
+        z-index: 0;
+        transition: opacity 0.2s ease-in-out;
     }
-    .indicator.online { background-color: #3fb950; }
-    .indicator.offline { background-color: #f85149; }
+    .grid-tile:hover .tile-bg-image {
+        opacity: 0.6;
+    }
+    .tile-content {
+        position: relative;
+        z-index: 1;
+    }
+    .tile-title { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #58a6ff; }
+    .tile-date { margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #8b949e; }
+    .tile-desc { margin: 0; font-size: 0.9rem; color: #c9d1d9; }
 </style>
