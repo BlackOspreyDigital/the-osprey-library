@@ -34,12 +34,14 @@ const { title, description, pubDate, heroImage } = Astro.props;
 </html>
 
 <style>
+    /* 1. Widen the container to support two columns comfortably */
     .post-container {
-        max-width: 800px;
+        max-width: 1200px; /* Upgraded from 800px */
         margin: 0 auto;
         padding: 4rem 2rem;
         background-color: transparent;
     }
+    
     .hero-image {
         width: 100%;
         border-radius: 8px;
@@ -47,7 +49,7 @@ const { title, description, pubDate, heroImage } = Astro.props;
     }
     .post-title {
         font-size: 2.5rem;
-        color: #d1893d;
+        color: #d1893d; /* Keeping your new orange accent! */
         margin: 0 0 0.5rem 0;
     }
     .post-date {
@@ -64,27 +66,54 @@ const { title, description, pubDate, heroImage } = Astro.props;
         font-size: 1.1rem;
         color: #c9d1d9;
     }
-    /* Basic markdown styling */
+
+    /* Base styling & Mobile Stack (Default) */
     .post-content :global(h2) { color: #fff; margin-top: 2rem; }
     .post-content :global(h3) { color: #fff; margin-top: 1.5rem; }
-    .post-content :global(pre) { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d;}
+    .post-content :global(pre) { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; margin-bottom: 1.5rem; }
     .post-content :global(code) { font-family: monospace; background: #21262d; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    .post-content :global(video) { width: 100%; border-radius: 6px; margin: 2rem 0; }
-
-    /* Constrain paragraphs for readability */
-    .post-content :global(p) { 
-        max-width: 65ch; 
-        margin-bottom: 1.5rem; 
-    }
-
-    /* Keep markdown images responsive and flush with the text */
-    .post-content :global(img) {
-        width: 100%;          /* Force the image to expand... */
-        max-width: 65ch;      /* ...but lock it to the exact width of the paragraphs */
-        height: auto;
+    .post-content :global(p) { margin-bottom: 1.5rem; }
+    
+    .post-content :global(img),
+    .post-content :global(iframe) {
+        width: 100%;
         border-radius: 6px;
         border: 1px solid #30363d;
         margin: 2rem 0;
-        display: block;       /* Prevents weird inline spacing issues */
+        display: block;
+    }
+    .post-content :global(iframe) {
+        aspect-ratio: 16 / 9;
+    }
+
+    /* 2. The Magic Split (Desktop Only) */
+    @media (min-width: 1024px) {
+        .post-content {
+            display: grid;
+            /* The Asymmetrical Split: Text gets 1 fraction, Media gets 1.5 fractions */
+            grid-template-columns: 1fr 1.6fr; 
+            column-gap: 4rem; /* Tightened the gap so they sit closer together */
+            grid-auto-flow: dense;
+            align-items: start;
+        }
+
+        /* Lock all text/code to the LEFT column */
+        .post-content :global(p),
+        .post-content :global(h2),
+        .post-content :global(h3),
+        .post-content :global(ul),
+        .post-content :global(ol),
+        .post-content :global(pre) {
+            grid-column: 1;
+            margin-top: 0; 
+        }
+
+        /* Lock all media to the RIGHT column */
+        .post-content :global(img),
+        .post-content :global(iframe),
+        .post-content :global(video) {
+            grid-column: 2;
+            margin-top: 0; 
+        }
     }
 </style>
