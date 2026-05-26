@@ -18,7 +18,15 @@ const { title, description, pubDate, heroImage } = Astro.props;
         <article class="post-container">
             <a href="/crescendo" style="color: #8b949e; text-decoration: none; display: inline-block; margin-bottom: 2rem;">&larr; Back to Devlog</a>
             
-            {heroImage && <img src={heroImage} alt="" class="hero-image" />}
+            {heroImage && (
+                <>
+                    <img src={heroImage} alt={title} class="hero-image" id="hero-banner" />
+
+                    <dialog id="lightbox" class="lightbox">
+                        <img src={heroImage} alt={title} />
+                    </dialog>
+                </>
+            )}
             
             <h1 class="post-title">{title}</h1>
             <p class="post-date">
