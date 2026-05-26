@@ -74,6 +74,44 @@ import '../styles/global.css';
         transition: border-color 0.15s ease;
     }
     nav a:hover { border-color: #d1893d; }
+    
+    /* Mobile Layout Override */
+    @media (max-width: 768px) {
+        .app-layout {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            /* Un-anchor the sidebar from the left edge */
+            position: relative; 
+            width: 100%;
+            height: auto;
+            border-right: none;
+            border-bottom: 1px solid #30363d;
+            padding: 1.5rem;
+            align-items: center; /* Centers the logo and text */
+        }
+
+        .main-content {
+            /* Remove the 280px offset so content fills the screen */
+            margin-left: 0; 
+            width: 100%;
+            padding: 1.5rem; /* Tighter padding for mobile readability */
+        }
+
+        nav {
+            /* Turn the vertical link list into a wrapped horizontal row */
+            flex-direction: row; 
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        nav a {
+            font-size: 0.85rem; /* Slightly scale down text to fit mobile screens */
+            padding: 8px 12px;
+        }
+    }
 </style>
 
 <script>
@@ -206,6 +244,8 @@ import '../styles/global.css';
                 requestAnimationFrame(render);
             };
             requestAnimationFrame(render);
+
+            
         }
     }
 </script>
