@@ -1,0 +1,24 @@
+---
+title: "Surf : Proof of Concept"
+description: ""
+pubDate: 2026-03-23
+heroImage: "/images/surf.png"
+---
+
+<div class ="text-group">
+
+# Voxel Technologies
+
+For proof of concept and the sheer love and joy of the game counter strike source, especially the surf servers, I had to replicate this the best I could.
+It's not perfect by no means and could use a lot more fine tuning with the physics sliding math, and building a character controller out more. The map was 
+thrown together as a quick test bed, if desired this could easily be structured into a game. Currently I just import the .glb map, once that imports an automated
+collider is generated and applied to the mesh for fast iterations. Mesh colliders are available, but for focusing on game loop proofing this is the preffered method.
+
+When the player falls more than 7-9 seconds of air time without contact the character is spawned back to the engine spawners that you can add by pressing ctrl+A.
+
+Spawner model ( A nod to Halo Bungie era ) :
+![BSDF](/images/spawn.png)
+
+</div>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/T8Bx8I7ZTG4?si=jPMvUFBppFpuIYu-" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
