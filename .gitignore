@@ -1,6 +1,7 @@
 # Build Artifacts
 dist/
 .astro/
+.wrangler/
 
 # Dependencies
 node_modules/
