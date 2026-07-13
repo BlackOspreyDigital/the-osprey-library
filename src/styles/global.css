@@ -159,3 +159,26 @@ header p {
     color: #c9d1d9;
     line-height: 1.5;
 }
+
+.forum-thumb-btn {
+    display: block;
+    width: 664px;
+    height: 116px;
+    margin: 2rem auto 3.5rem auto; /* Aligns with your existing spacing */
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.15s ease-in-out;
+}
+
+.forum-thumb-btn:hover {
+    border-color: #58a6ff; /* Matches your landing page hover accent */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.forum-thumb-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

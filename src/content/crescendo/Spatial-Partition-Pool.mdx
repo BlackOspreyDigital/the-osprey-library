@@ -1,0 +1,58 @@
+---
+title: "Spatial Partition Pool"
+description: ""
+pubDate: 2026-02-06
+heroImage: ""
+---
+
+# Ditching the octree for a 64 bit quadtree
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'fontFamily': 'monospace',
+      'primaryColor': '#0a0a0a',
+      'primaryTextColor': '#ff8800',
+      'primaryBorderColor': '#ff8800',
+      'lineColor': '#886644',
+      'clusterBkg': '#12100e',
+      'clusterBorder': '#332211',
+      'edgeLabelBackground': '#0a0a0a',
+      'fontSize': '14px'
+    }
+  }
+}%%
+graph TD
+    subgraph "Engine Core (Consumers)"
+        RHI[Vulkan Rendering Server <br/> CPU Frustum Culling]
+        PHYS[Jolt Physics Server <br/> Broadphase Collision]
+    end
+
+    subgraph "Terrain Module (The Owner)"
+        TM[Terrain Manager]
+        
+        subgraph "Data-Oriented Memory Pool (64-bit Spatial Tree)"
+            SPP[Spatial Partition Pool]
+            
+            direction LR
+            AABB[std::vector<AABB> <br/> Strictly 32-bytes]
+            NODE[std::vector<OctreeNode> <br/> Strictly 16-bytes]
+        end
+        
+        VOX[Voxel Chunk Array <br/> Dense Mesh / Entity Payload]
+    end
+
+    TM -->|Initializes & Manages| SPP
+    TM -->|Manages| VOX
+    
+    SPP -->|Parallel Array 1| AABB
+    SPP -->|Parallel Array 2| NODE
+    
+    NODE -.->|dataIndex maps to| VOX
+    NODE -.->|firstChildIndex| NODE
+    
+    RHI ===>|1. Read-Only Math Queries| AABB
+    PHYS ===>|1. Read-Only Math Queries| AABB
+    RHI -.->|2. Fetch Payload on Hit| VOX
